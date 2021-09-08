@@ -27,9 +27,9 @@ namespace Forma_de_captura_de_datos
             DialogResult res = dlg.ShowDialog();
             if (res == DialogResult.OK)
             {
-                foreach(string s in listPersonas.Items)
+                foreach (string s in listPersonas.Items)
                 {
-                    File.AppendAllText(dlg.FileName,s + "\n");
+                    File.AppendAllText(dlg.FileName, s + "\n");
                 }
             }
         }
@@ -65,24 +65,25 @@ namespace Forma_de_captura_de_datos
                 {
                     listPersonas.SelectedIndex++;
                 }
-                catch (Exception){}                
+                catch (Exception) { }
             }
         }
 
         private void buttonAnterior_Click(object sender, EventArgs e)
         {
-            if (listPersonas.Items.Count > 0) {            
+            if (listPersonas.Items.Count > 0)
+            {
                 try
                 {
                     listPersonas.SelectedIndex--;
                 }
-                catch(Exception){}
+                catch (Exception) { }
             }
         }
 
         private void listPersonas_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if(listPersonas.SelectedIndex != -1)
+            if (listPersonas.SelectedIndex != -1)
             {
                 updateCurrentPerson();
             }
@@ -94,8 +95,18 @@ namespace Forma_de_captura_de_datos
 
             nombre.Text = campos[0];
             edad.Text = campos[1];
-            ciudad.Text = campos [2];
+            ciudad.Text = campos[2];
             fechaDeNacimiento.Value = DateTime.Parse(campos[3]);
+        }
+
+        private void nombre_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            validacion.nombreLetrasEspacios(e);
+        }
+
+        private void edad_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            validacion.edadEntre0y120(e);
         }
     }
 
@@ -128,7 +139,49 @@ namespace Forma_de_captura_de_datos
 
         public String getData()
         {
-            return(nombre + " | " + edad.ToString() + " | " + ciudad + " | " + fechaNacimiento.ToString("MM/dd/yyyy"));
+            return (nombre + " | " + edad.ToString() + " | " + ciudad + " | " + fechaNacimiento.ToString("MM/dd/yyyy"));
         }
+    }
+
+    public class validacion 
+    {
+        
+
+        public static void nombreLetrasEspacios(KeyPressEventArgs pE)
+        {
+            if (char.IsLetter(pE.KeyChar))
+            {
+                pE.Handled = false;
+            }
+            else if (char.IsControl(pE.KeyChar))
+            {
+                pE.Handled = false;
+            }
+            else if (char.IsSeparator(pE.KeyChar))
+            {
+                pE.Handled = false;
+            }
+            else
+            {
+                pE.Handled = true;
+            }
+        }
+
+        public static void edadEntre0y120(KeyPressEventArgs pE)
+        {
+            if (char.IsDigit(pE.KeyChar))
+            {
+                pE.Handled = false;
+            }
+            else if (char.IsControl(pE.KeyChar))
+            {
+                pE.Handled = false;
+            }
+            else
+            {
+                pE.Handled = true;
+            }
+        }
+
     }
 }

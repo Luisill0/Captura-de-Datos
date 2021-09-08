@@ -55,6 +55,7 @@ namespace Forma_de_captura_de_datos
             this.nombre.Name = "nombre";
             this.nombre.Size = new System.Drawing.Size(294, 23);
             this.nombre.TabIndex = 0;
+            this.nombre.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.nombre_KeyPress);
             // 
             // cuadroDeAyudaNombre
             // 
@@ -73,6 +74,7 @@ namespace Forma_de_captura_de_datos
             this.edad.Name = "edad";
             this.edad.Size = new System.Drawing.Size(294, 23);
             this.edad.TabIndex = 2;
+            this.edad.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.edad_KeyPress);
             // 
             // cuadroDeAyudaEdad
             // 
