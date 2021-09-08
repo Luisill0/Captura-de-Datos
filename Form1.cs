@@ -29,9 +29,14 @@ namespace Forma_de_captura_de_datos
                 DialogResult res = dlg.ShowDialog();
                 if (res == DialogResult.OK)
                 {
+                    if (File.Exists(dlg.FileName))
+                    {
+                        File.Delete(dlg.FileName);
+                    }
                     foreach (string s in listPersonas.Items)
                     {
                         File.AppendAllText(dlg.FileName, s + "\n");
+                        
                     }
                 }
             }
@@ -39,32 +44,49 @@ namespace Forma_de_captura_de_datos
 
         private void buttonInsertar_Click(object sender, EventArgs e)
         {
-            if (formaCompleta())
+            try
             {
-                Persona person = new Persona();
-                person.setNombre(nombre.Text);
-                person.setEdad(int.Parse(edad.Text));
-                person.setCiudad(ciudad.Text);
-                person.setFechaNacimiento(fechaDeNacimiento.Value.Date);
-                listPersonas.Items.Add(person.getData());
-                clearTextBox();
+                if (formaCompleta())
+                {
+                    Persona person = new Persona();
+                    person.setNombre(nombre.Text);
+                    person.setEdad(int.Parse(edad.Text));
+                    person.setCiudad(ciudad.Text);
+                    person.setFechaNacimiento(fechaDeNacimiento.Value.Date);
+                    listPersonas.Items.Add(person.getData());
+                    clearTextBox();
+                }
             }
+            catch (IndexOutOfRangeException)
+            {
+                MessageBox.Show("Valor de edad debe ser entre 1 y 120");
+            }   
         }
 
         private void buttonEliminar_Click(object sender, EventArgs e)
         {
             listPersonas.Items.Remove(listPersonas.SelectedItem);
+            clearTextBox();
         }
 
         private bool formaCompleta()
         {
-            return (nombre.Text != "" && edad.Text != "" && ciudad.Text != "");
+            bool flag = nombre.Text != "" && edad.Text != "" && ciudad.SelectedIndex != -1;
+
+            if (flag)
+            {
+                if (int.Parse(edad.Text) < 1 || int.Parse(edad.Text) > 120)
+                {
+                    throw (new IndexOutOfRangeException());
+                }
+            }
+            return flag;
         }
         private void clearTextBox()
         {
             nombre.Text = "";
             edad.Text = "";
-            ciudad.Text = "";
+            ciudad.SelectedIndex = -1;
         }
 
         private void buttonSiguiente_Click(object sender, EventArgs e)
@@ -108,17 +130,16 @@ namespace Forma_de_captura_de_datos
             edad.Text = campos[1];
             ciudad.Text = campos[2];
             fechaDeNacimiento.Value = DateTime.Parse(campos[3]);
-
         }
 
         private void nombre_KeyPress(object sender, KeyPressEventArgs e)
         {
-            validacion.nombreLetrasEspacios(e);
+            Validacion.nombreLetrasEspacios(e);
         }
 
         private void edad_KeyPress(object sender, KeyPressEventArgs e)
         {
-            validacion.edadEntre0y120(e);
+            Validacion.edadEntre1y120(e);
         }
 
         private void buttonOpen_Click(object sender, EventArgs e)
@@ -144,17 +165,17 @@ namespace Forma_de_captura_de_datos
 
     public class Persona
     {
-        private String nombre;
-        private String ciudad;
+        private string nombre;
+        private string ciudad;
         private int edad;
         private DateTime fechaNacimiento;
 
-        public void setNombre(String nombre)
+        public void setNombre(string nombre)
         {
             this.nombre = nombre;
         }
 
-        public void setCiudad(String ciudad)
+        public void setCiudad(string ciudad)
         {
             this.ciudad = ciudad;
         }
@@ -169,16 +190,14 @@ namespace Forma_de_captura_de_datos
             this.fechaNacimiento = fechaNacimiento;
         }
 
-        public String getData()
+        public string getData()
         {
             return (nombre + " | " + edad.ToString() + " | " + ciudad + " | " + fechaNacimiento.ToString("MM/dd/yyyy"));
         }
     }
 
-    public class validacion 
+    public class Validacion 
     {
-        
-
         public static void nombreLetrasEspacios(KeyPressEventArgs pE)
         {
             if (char.IsLetter(pE.KeyChar))
@@ -199,7 +218,7 @@ namespace Forma_de_captura_de_datos
             }
         }
 
-        public static void edadEntre0y120(KeyPressEventArgs pE)
+        public static void edadEntre1y120(KeyPressEventArgs pE)
         {
             if (char.IsDigit(pE.KeyChar))
             {
