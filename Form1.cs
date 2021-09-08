@@ -20,16 +20,19 @@ namespace Forma_de_captura_de_datos
 
         private void buttonSave_Click(object sender, EventArgs e)
         {
-            SaveFileDialog dlg = new SaveFileDialog();
-
-            dlg.Filter = "Archivos.txt|.txt|Otro archivo|.rty";
-
-            DialogResult res = dlg.ShowDialog();
-            if (res == DialogResult.OK)
+            if (listPersonas.Items.Count != 0)
             {
-                foreach (string s in listPersonas.Items)
+                SaveFileDialog dlg = new SaveFileDialog();
+
+                dlg.Filter = "Archivos.txt|.txt|Otro archivo|.rty";
+
+                DialogResult res = dlg.ShowDialog();
+                if (res == DialogResult.OK)
                 {
-                    File.AppendAllText(dlg.FileName, s + "\n");
+                    foreach (string s in listPersonas.Items)
+                    {
+                        File.AppendAllText(dlg.FileName, s + "\n");
+                    }
                 }
             }
         }
@@ -44,6 +47,7 @@ namespace Forma_de_captura_de_datos
                 person.setCiudad(ciudad.Text);
                 person.setFechaNacimiento(fechaDeNacimiento.Value.Date);
                 listPersonas.Items.Add(person.getData());
+                clearTextBox();
             }
         }
 
@@ -55,6 +59,12 @@ namespace Forma_de_captura_de_datos
         private bool formaCompleta()
         {
             return (nombre.Text != "" && edad.Text != "" && ciudad.Text != "");
+        }
+        private void clearTextBox()
+        {
+            nombre.Text = "";
+            edad.Text = "";
+            ciudad.Text = "";
         }
 
         private void buttonSiguiente_Click(object sender, EventArgs e)
@@ -85,6 +95,7 @@ namespace Forma_de_captura_de_datos
         {
             if (listPersonas.SelectedIndex != -1)
             {
+                clearTextBox();
                 updateCurrentPerson();
             }
         }
@@ -97,6 +108,7 @@ namespace Forma_de_captura_de_datos
             edad.Text = campos[1];
             ciudad.Text = campos[2];
             fechaDeNacimiento.Value = DateTime.Parse(campos[3]);
+
         }
 
         private void nombre_KeyPress(object sender, KeyPressEventArgs e)
@@ -107,6 +119,26 @@ namespace Forma_de_captura_de_datos
         private void edad_KeyPress(object sender, KeyPressEventArgs e)
         {
             validacion.edadEntre0y120(e);
+        }
+
+        private void buttonOpen_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.Filter = "Archvos txt|*.txt";
+            DialogResult res = dlg.ShowDialog();
+
+            if (res == DialogResult.OK)
+            {
+                listPersonas.Items.Clear();
+                using (StreamReader lector = new StreamReader(dlg.FileName))
+                {
+                    string linea;
+                    while ((linea = lector.ReadLine()) != null)
+                    {
+                        listPersonas.Items.Add(linea);
+                    }
+                }
+            }
         }
     }
 
